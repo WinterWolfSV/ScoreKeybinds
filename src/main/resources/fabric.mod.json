@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "score_keybinds",
+  "version": "${version}",
+  "name": "ScoreKeybinds",
+  "description": "A custom mod for KingVaughan",
+  "authors": ["WinterWolfSV"],
+  "contact": {"repo": "github.com"},
+  "license": "MIT",
+  "icon": "assets/ScoreKeybinds/icon.png",
+  "environment": "*",
+  "entrypoints": {
+	"client": ["winterwolfsv.scorekeybinds.client.ScoreKeybindsClient"],
+	"main": ["winterwolfsv.scorekeybinds.ScoreKeybinds"]
+  },
+  "mixins": [
+	"ScoreKeybinds.mixins.json"
+  ],
+  "depends": {
+	"fabricloader": ">=0.14.17",
+	"fabric": "*",
+	"minecraft": "1.16.5"
+  }
+}
