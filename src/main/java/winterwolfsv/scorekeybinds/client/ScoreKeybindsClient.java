@@ -12,6 +12,7 @@ import net.minecraft.text.LiteralText;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallback;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -38,9 +39,10 @@ public class ScoreKeybindsClient implements ClientModInitializer {
             return null;
         }
     }
-
+    private KeyBinding[] keyBindings = new KeyBinding[Objects.requireNonNull(getConfigData()).length()];
     private void createKeybinds() {
         try {
+            int i = 0;
             for (Object obj : Objects.requireNonNull(getConfigData())) {
                 if (obj instanceof JSONObject) {
                     JSONObject jsonObject = (JSONObject) obj;
@@ -49,13 +51,14 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                     String name = jsonObject.getString("name");
                     System.out.println(key + " " + command + " " + name);
 
-                    KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                    keyBindings[i]= KeyBindingHelper.registerKeyBinding(new KeyBinding(
                             name, // The translation key of the keybinding's name
                             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                            (int) key.charAt(0), // The keycode of the key
-                            "category.examplemod.test" // The translation key of the keybinding's category.
+                            key.charAt(0)-32, // The keycode of the key),
+                            "Testing_category" // The translation key of the keybinding's category.
                     ));
                 }
+                i++;
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -73,13 +76,22 @@ public class ScoreKeybindsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        createKeybinds();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (keyBinding.wasPressed()) {
-                assert client.player != null;
-                client.player.sendChatMessage("/tp @s ~ 100 ~");
-                createKeybinds();
+            for (int i = 0; i < keyBindings.length; i++) {
+                if (keyBindings[i].wasPressed()) {
+                    assert client.player != null;
+                    client.player.sendChatMessage("/tp @s ~ 100 ~"+ Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
+                    break; // Break out of the loop after the first pressed button is found
+                }
             }
         });
+        //ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        //    while (keyBinding.wasPressed()) {
+        //        assert client.player != null;
+        //        client.player.sendChatMessage("/tp @s ~ 100 ~");
+        //    }
+        //});
     }
 }
 

@@ -22,6 +22,7 @@ public class ScoreKeybinds implements ModInitializer {
                 Path configDir = FabricLoader.getInstance().getConfigDir();
                 File configFile = new File(configDir + "\\scorekeybinds.json");
                 configFile.createNewFile();
+                System.out.println("Config file created");
                 FileWriter fileWriter = new FileWriter(configFile);
                 fileWriter.write(new Scanner(jsonFile, "UTF-8").useDelimiter("\\A").next());
                 fileWriter.close();
