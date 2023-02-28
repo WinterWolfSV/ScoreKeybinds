@@ -1,0 +1,26 @@
+[
+  {
+	"id": 1,
+	"key": "y",
+	"name": "Teleport 1",
+	"command": "scoreboard players set @s key1"
+  },
+  {
+	"id": 2,
+	"key": "u",
+	"name": "Teleport 2",
+	"command": "scoreboard players set @s key2"
+  },
+  {
+	"id": 3,
+	"key": "i",
+	"name": "Teleport 3",
+	"command": "scoreboard players set @s key3"
+  },
+  {
+	"id": 4,
+	"key": "o",
+	"name": "Teleport 4",
+	"command": "scoreboard players set @s key4"
+  }
+]
