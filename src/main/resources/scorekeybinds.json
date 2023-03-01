@@ -1,27 +1,27 @@
 [
   {
-	"key": " ",
+	"default_key": " ",
 	"name": "Command 1",
-	"command": "scoreboard players set @s key1"
+	"command": "scoreboard players set @s key1 1"
   },
   {
-	"key": " ",
+	"default_key": " ",
 	"name": "Command 2",
-	"command": "scoreboard players set @s key2"
+	"command": "scoreboard players set @s key2 2"
   },
   {
-	"key": " ",
+	"default_key": " ",
 	"name": "Command 3",
-	"command": "scoreboard players set @s key3"
+	"command": "scoreboard players set @s key3 3"
   },
   {
-	"key": " ",
+	"default_key": " ",
 	"name": "Command 4",
-	"command": "scoreboard players set @s key4"
+	"command": "scoreboard players set @s key4 4"
   },
   {
-	"key": " ",
+	"default_key": " ",
 	"name": "Command 5",
-	"command": "scoreboard players set @s key5"
+	"command": "scoreboard players set @s key5 5"
   }
 ]

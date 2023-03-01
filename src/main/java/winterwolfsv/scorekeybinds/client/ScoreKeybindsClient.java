@@ -46,14 +46,14 @@ public class ScoreKeybindsClient implements ClientModInitializer {
             for (Object obj : Objects.requireNonNull(getConfigData())) {
                 if (obj instanceof JSONObject) {
                     JSONObject jsonObject = (JSONObject) obj;
-                    String stringKey = jsonObject.getString("key").toLowerCase();
+                    String stringDefaultKey = jsonObject.getString("default_key").toLowerCase();
                     int key = -1;
-                    if (!stringKey.isEmpty() && stringKey.charAt(0) != ' ') {
-                        key = stringKey.charAt(0) - 32;
+                    if (!stringDefaultKey.isEmpty() && stringDefaultKey.charAt(0) != ' ') {
+                        key = stringDefaultKey.charAt(0) - 32;
                     }
                     String command = jsonObject.getString("command");
                     String name = jsonObject.getString("name");
-                    System.out.println("Creating keybind: '" + name + "' With keybind: '" + stringKey + "' For command: '" + command + "'");
+                    System.out.println("Creating keybind: '" + name + "' With keybind: '" + stringDefaultKey + "' For command: '" + command + "'");
                     keyBindings[i] = KeyBindingHelper.registerKeyBinding(new KeyBinding(name, InputUtil.Type.KEYSYM, key, "Score Keybindings"));
                 }
                 i++;
