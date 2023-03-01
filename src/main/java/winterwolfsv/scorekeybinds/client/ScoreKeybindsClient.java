@@ -8,13 +8,11 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.LiteralText;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCharCallback;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -39,59 +37,52 @@ public class ScoreKeybindsClient implements ClientModInitializer {
             return null;
         }
     }
-    private KeyBinding[] keyBindings = new KeyBinding[Objects.requireNonNull(getConfigData()).length()];
+
+    private final KeyBinding[] keyBindings = new KeyBinding[Objects.requireNonNull(getConfigData()).length()];
+
     private void createKeybinds() {
         try {
             int i = 0;
             for (Object obj : Objects.requireNonNull(getConfigData())) {
                 if (obj instanceof JSONObject) {
                     JSONObject jsonObject = (JSONObject) obj;
-                    String key = jsonObject.getString("key").toLowerCase();
+                    String stringKey = jsonObject.getString("key").toLowerCase();
+                    int key = -1;
+                    if (!stringKey.isEmpty() && stringKey.charAt(0) != ' ') {
+                        key = stringKey.charAt(0) - 32;
+                    }
                     String command = jsonObject.getString("command");
                     String name = jsonObject.getString("name");
-                    System.out.println(key + " " + command + " " + name);
-
-                    keyBindings[i]= KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                            name, // The translation key of the keybinding's name
-                            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                            key.charAt(0)-32, // The keycode of the key),
-                            "Testing_category" // The translation key of the keybinding's category.
-                    ));
+                    System.out.println("Creating keybind: '" + name + "' With keybind: '" + stringKey + "' For command: '" + command + "'");
+                    keyBindings[i] = KeyBindingHelper.registerKeyBinding(new KeyBinding(name, InputUtil.Type.KEYSYM, key, "Score Keybindings"));
                 }
                 i++;
             }
         } catch (Exception e) {
             System.out.println(e);
-
         }
     }
 
-    private static KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.examplemod.spook", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_R, // The keycode of the key
-            "category.examplemod.test" // The translation key of the keybinding's category.
-    ));
-
-
     @Override
     public void onInitializeClient() {
-        createKeybinds();
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            for (int i = 0; i < keyBindings.length; i++) {
-                if (keyBindings[i].wasPressed()) {
-                    assert client.player != null;
-                    client.player.sendChatMessage("/tp @s ~ 100 ~"+ Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
-                    break; // Break out of the loop after the first pressed button is found
+        try {
+            createKeybinds();
+            ClientTickEvents.END_CLIENT_TICK.register(client -> {
+                for (int i = 0; i < keyBindings.length; i++) {
+                    if (keyBindings[i].wasPressed()) {
+                        assert client.player != null;
+                        if (Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command").charAt(0) == '/') {
+                            client.player.sendChatMessage(Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
+                        } else {
+                            client.player.sendChatMessage("/" + Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
+                        }
+                        break;
+                    }
                 }
-            }
-        });
-        //ClientTickEvents.END_CLIENT_TICK.register(client -> {
-        //    while (keyBinding.wasPressed()) {
-        //        assert client.player != null;
-        //        client.player.sendChatMessage("/tp @s ~ 100 ~");
-        //    }
-        //});
+            });
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
 
