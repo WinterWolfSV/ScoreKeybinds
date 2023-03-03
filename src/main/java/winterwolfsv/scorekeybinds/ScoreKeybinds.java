@@ -11,22 +11,26 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 public class ScoreKeybinds implements ModInitializer {
+    public static void createConfigFile() {
+        try {
+            InputStream jsonFile = ScoreKeybinds.class.getClassLoader().getResourceAsStream("scorekeybinds.json");
+            Path configDir = FabricLoader.getInstance().getConfigDir();
+            File configFile = new File(configDir + "\\scorekeybinds.json");
+            configFile.createNewFile();
+            System.out.println("Config file created for mod: ScoreKeybinds.");
+            FileWriter fileWriter = new FileWriter(configFile);
+            assert jsonFile != null;
+            fileWriter.write(new Scanner(jsonFile, "UTF-8").useDelimiter("\\A").next());
+            fileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void onInitialize() {
         if (!new File(FabricLoader.getInstance().getConfigDir() + "\\scorekeybinds.json").exists()) {
-            try {
-                InputStream jsonFile = getClass().getClassLoader().getResourceAsStream("scorekeybinds.json");
-                Path configDir = FabricLoader.getInstance().getConfigDir();
-                File configFile = new File(configDir + "\\scorekeybinds.json");
-                configFile.createNewFile();
-                System.out.println("Config file created for mod: ScoreKeybinds");
-                FileWriter fileWriter = new FileWriter(configFile);
-                assert jsonFile != null;
-                fileWriter.write(new Scanner(jsonFile, "UTF-8").useDelimiter("\\A").next());
-                fileWriter.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            createConfigFile();
         }
     }
 }

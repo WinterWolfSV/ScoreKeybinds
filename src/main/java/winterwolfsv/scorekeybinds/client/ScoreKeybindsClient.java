@@ -8,10 +8,12 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import winterwolfsv.scorekeybinds.ScoreKeybinds;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
@@ -22,9 +24,7 @@ public class ScoreKeybindsClient implements ClientModInitializer {
 
     private JSONArray getConfigData() {
         String path = FabricLoader.getInstance().getConfigDir() + "\\scorekeybinds.json";
-        System.out.println(path);
         if (new File(path).exists()) {
-            System.out.println("Path to config file for mod exists.");
             try {
                 InputStream inputStream = Files.newInputStream(Paths.get(path));
                 Scanner scanner = new Scanner(inputStream, "UTF-8");
@@ -60,19 +60,23 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                     }
                     i++;
                 }
-            } else {
-                System.out.println("Config file not found for mod: ScoreKeybinds. Disabling mod.");
             }
         } catch (Exception e) {
             System.out.println(e);
+            String path = FabricLoader.getInstance().getConfigDir() + "\\scorekeybinds.json";
+            System.out.println("Config file not found for mod: ScoreKeybinds. Regenerating config file from defaults.");
+            File configFile = new File(path);
+            configFile.delete();
+            ScoreKeybinds.createConfigFile();
+            throw new RuntimeException("Config file for mod: ScoreKeybinds has been incorrectly set up. The config file has been regenerated from defaults. Please restart the game to fix this error.");
+
         }
     }
 
     @Override
     public void onInitializeClient() {
-        AtomicBoolean disableMod = new AtomicBoolean(false);
         try {
-            if (getConfigData() != null && !disableMod.get()) {
+            if (getConfigData() != null) {
                 createKeybinds();
                 ClientTickEvents.END_CLIENT_TICK.register(client -> {
                     for (int i = 0; i < keyBindings.length; i++) {
@@ -87,20 +91,15 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                             }
                         } catch (Exception e) {
                             System.out.println(e);
-                            disableMod.set(true);
                         }
-
                     }
                 });
             } else {
                 System.out.println("Config file not found for mod: ScoreKeybinds. Disabling mod.");
-                disableMod.set(true);
-
             }
 
         } catch (Exception e) {
             System.out.println(e);
-            disableMod.set(true);
         }
     }
 }
