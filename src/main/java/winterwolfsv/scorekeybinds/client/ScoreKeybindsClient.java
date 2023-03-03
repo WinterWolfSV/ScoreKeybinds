@@ -13,11 +13,9 @@ import winterwolfsv.scorekeybinds.ScoreKeybinds;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class ScoreKeybindsClient implements ClientModInitializer {
@@ -31,7 +29,7 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                 String jsonString = scanner.useDelimiter("\\A").next();
                 return new JSONArray(jsonString);
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
                 return null;
             }
         } else {
@@ -62,7 +60,7 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             String path = FabricLoader.getInstance().getConfigDir() + "\\scorekeybinds.json";
             System.out.println("Config file not found for mod: ScoreKeybinds. Regenerating config file from defaults.");
             File configFile = new File(path);
@@ -83,14 +81,16 @@ public class ScoreKeybindsClient implements ClientModInitializer {
                         try {
                             if (keyBindings[i].wasPressed()) {
                                 if (getConfigData().getJSONObject(i).getString("command").charAt(0) == '/') {
+                                    assert client.player != null;
                                     client.player.sendChatMessage(Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
                                 } else {
+                                    assert client.player != null;
                                     client.player.sendChatMessage("/" + Objects.requireNonNull(getConfigData()).getJSONObject(i).getString("command"));
                                 }
                                 break;
                             }
                         } catch (Exception e) {
-                            System.out.println(e);
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -99,8 +99,7 @@ public class ScoreKeybindsClient implements ClientModInitializer {
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
-
