@@ -5,7 +5,7 @@
   "name": "ScoreKeybinds",
   "description": "A custom mod for KingVaughan",
   "authors": ["WinterWolfSV"],
-  "contact": {"repo": "github.com"},
+  "contact": {"repo": "https://github.com/WinterWolfSV/ScoreKeybinds"},
   "license": "CC-BY-NC-4.0",
   "environment": "*",
   "entrypoints": {
